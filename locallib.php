@@ -32,6 +32,7 @@ define('ADOBE_TMZ_LENGTH', 6);
 function adobe_connection_test($host = '', $port = 80, $username = '',
                                $password = '', $httpheader = '',
                                $emaillogin, $https = false) {
+    global $CFG;
 
     if (empty($host) or
         empty($port) or (0 == $port) or
@@ -110,7 +111,7 @@ function adobe_connection_test($host = '', $port = 80, $username = '',
 
                 //Test retrevial of folders
                 echo '<p>Testing retrevial of shared content, recording and meeting folders:</p>';
-                $folderscoid = aconnect_get_folder($aconnectDOM, 'content');
+                $folderscoid = aconnect_get_folder($aconnectDOM, $CFG->adobeconnect_foldercon);
 
                 if ($folderscoid) {
                     echo '<p style="color:#006633">successfully obtained shared content folder scoid: '. $folderscoid . '</p>';
@@ -122,7 +123,7 @@ function adobe_connection_test($host = '', $port = 80, $username = '',
 
                 }
 
-                $folderscoid = aconnect_get_folder($aconnectDOM, 'forced-archives');
+                $folderscoid = aconnect_get_folder($aconnectDOM, $CFG->adobeconnect_folderfarch);
 
                 if ($folderscoid) {
                     echo '<p style="color:#006633">successfully obtained forced-archives (meeting recordings) folder scoid: '. $folderscoid . '</p>';
@@ -134,7 +135,7 @@ function adobe_connection_test($host = '', $port = 80, $username = '',
 
                 }
 
-                $folderscoid = aconnect_get_folder($aconnectDOM, 'meetings');
+                $folderscoid = aconnect_get_folder($aconnectDOM, $CFG->adobeconnect_foldermeet);
 
                 if ($folderscoid) {
                     echo '<p style="color:#006633">successfully obtained meetings folder scoid: '. $folderscoid . '</p>';
@@ -147,7 +148,7 @@ function adobe_connection_test($host = '', $port = 80, $username = '',
                 }
 
                 //Test creating a meeting
-                $folderscoid = aconnect_get_folder($aconnectDOM, 'meetings');
+                $folderscoid = aconnect_get_folder($aconnectDOM, $CFG->adobeconnect_foldermeet);
 
                 $meeting = new stdClass();
                 $meeting->name = 'testmeetingtest';
@@ -1207,7 +1208,7 @@ function aconnect_remove_meeting($aconnect, $scoid) {
  */
 function aconnect_move_to_shared($aconnect, $scolist) {
     // Get shared folder sco-id
-    $shscoid = aconnect_get_folder($aconnect, 'content');
+    $shscoid = aconnect_get_folder($aconnect, $CFG->adobeconnect_foldercon);
 
     // Iterate through list of sco and move them all to the shared folder
     if (!empty($shscoid)) {

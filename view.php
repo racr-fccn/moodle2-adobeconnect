@@ -145,7 +145,7 @@ if (!empty($meetscoids)) {
 
     // Get the forced recordings folder sco-id
     // Get recordings that are based off of the meeting
-    $fldid = aconnect_get_folder($aconnect, 'forced-archives');
+    $fldid = aconnect_get_folder($aconnect, $CFG->adobeconnect_folderfarch);
     foreach($meetscoids as $scoid) {
 
         $data = aconnect_get_recordings($aconnect, $fldid, $scoid->meetingscoid);
@@ -169,7 +169,7 @@ if (!empty($meetscoids)) {
 
     //Get the shared content folder sco-id
     // Create a list of recordings moved to the shared content folder
-    $fldid = aconnect_get_folder($aconnect, 'content');
+    $fldid = aconnect_get_folder($aconnect, $CFG->adobeconnect_foldercon);
     foreach($meetscoids as $scoid) {
 
         // May need this later on
@@ -285,7 +285,7 @@ $aconnect = aconnect_login();
 $cond = array('instanceid' => $adobeconnect->id, 'groupid' => $groupid);
 $scoid = $DB->get_field('adobeconnect_meeting_groups', 'meetingscoid', $cond);
 
-$meetfldscoid = aconnect_get_folder($aconnect, 'meetings');
+$meetfldscoid = aconnect_get_folder($aconnect, $CFG->adobeconnect_foldermeet);
 $filter = array('filter-sco-id' => $scoid);
 
 if (($meeting = aconnect_meeting_exists($aconnect, $meetfldscoid, $filter))) {

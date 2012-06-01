@@ -34,6 +34,14 @@ $string['email_login_desc'] = 'Check this option only if your Connect Pro server
                               'this option on/off during regular usage of this activity module can potentially create duplicaed users on the Connect Pro server';
 $string['endtime'] = 'End time';
 $string['existingusers'] = '$a existing users';
+$string['foldermeet'] = 'Meetings Folder';
+$string['foldermeet_desc'] = 'Meetings Folder Description';
+$string['foldercon'] = 'Content Folder';
+$string['foldercon_desc'] = 'Content Folder Description';
+$string['folderfarch'] = 'Forced Archive Folder';
+$string['folderfarch_desc'] = 'Forced Archive Folder Description';
+$string['folderumeet'] = 'User Meetings Folder';
+$string['folderumeet_desc'] = 'User Meetings Folder Description';
 $string['groupswitch'] = 'Filter by group';
 $string['host'] = 'Host';
 $string['host_desc'] = 'Where REST calls get sent to';
