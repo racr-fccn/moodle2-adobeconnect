@@ -172,7 +172,7 @@ class connect_class {
 
        // RR
        if (isset($this->_cookie)) {       	
-         curl_setopt($ch, CURLOPT_COOKIE, "Set-Cookie: BREEZESESSION=" . $this->_cookie . ";HttpOnly;domain=.adobeconnect.com;path=/");
+         curl_setopt($ch, CURLOPT_COOKIE, "BREEZESESSION=" . $this->_cookie . ";HttpOnly;domain=.adobeconnect.com;path=/");
        }
        // -RR
 
