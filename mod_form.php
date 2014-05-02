@@ -60,8 +60,7 @@ class mod_adobeconnect_mod_form extends moodleform_mod {
         $mform->disabledIf('meeturl', 'tempenable', 'eq', 0);
 
         // Public or private meeting
-        //$meetingpublic = array(1 => get_string('public', 'adobeconnect'), 0 => get_string('private', 'adobeconnect'));
-        $meetingpublic = array(0 => get_string('private', 'adobeconnect'));
+        $meetingpublic = array(1 => get_string('public', 'adobeconnect'), 0 => get_string('private', 'adobeconnect'));
         $mform->addElement('select', 'meetingpublic', get_string('meetingtype', 'adobeconnect'), $meetingpublic);
         $mform->addHelpButton('meetingpublic', 'meetingtype', 'adobeconnect');
 //        $mform->addHelpButton('meetingpublic', array('meetingtype', get_string('meetingtype', 'adobeconnect'), 'adobeconnect'));
@@ -79,12 +78,15 @@ class mod_adobeconnect_mod_form extends moodleform_mod {
         $mform->addElement('hidden', 'tempenable');
         $mform->setType('type', PARAM_INT);
 
+        $mform->addElement('hidden', 'userid');
+        $mform->setType('type', PARAM_INT);
+
         // Start and end date selectors
         $time       = time();
         $starttime  = usertime($time);
         $mform->addElement('date_time_selector', 'starttime', get_string('starttime', 'adobeconnect'));
         $mform->addElement('date_time_selector', 'endtime', get_string('endtime', 'adobeconnect'));
-        $mform->setDefault('endtime', strtotime('+17 weeks'));
+        $mform->setDefault('endtime', strtotime('+2 hours'));
 
 
 //-------------------------------------------------------------------------------
@@ -115,18 +117,27 @@ class mod_adobeconnect_mod_form extends moodleform_mod {
     }
 
     function validation($data, $files) {
-        global $CFG, $DB;
+        global $CFG, $DB, $USER, $COURSE;
 
         $errors = parent::validation($data, $files);
 
-        $aconnect = aconnect_login();
+        $username     = set_username($USER->username, $USER->email);
+        $usr_fldscoid = '';
+        $aconnect     = aconnect_login();
 
         // Search for a Meeting with the same starting name.  It will cause a duplicate
         // meeting name (and error) when the user begins to add participants to the meeting
         $meetfldscoid = aconnect_get_folder($aconnect, 'meetings');
         $filter = array('filter-like-name' => $data['name']);
-        $namematches = aconnect_meeting_exists($aconnect, $meetfldscoid, $filter);
+        $namematches = aconnect_meeting_exists($aconnect, $meetfldscoid, $filter);        
+        
+        /// Search the user's adobe connect folder
+        $usrfldscoid = aconnect_get_user_folder_sco_id($aconnect, $username);
 
+	if (!empty($usrfldscoid)) {
+        	$namematches = $namematches + aconnect_meeting_exists($aconnect, $usrfldscoid, $filter);
+        }
+        
         if (empty($namematches)) {
             $namematches = array();
         }
@@ -143,6 +154,11 @@ class mod_adobeconnect_mod_form extends moodleform_mod {
 
         $filter = array('filter-like-url-path' => $url);
         $urlmatches = aconnect_meeting_exists($aconnect, $meetfldscoid, $filter);
+        
+        /// Search the user's adobe connect folder
+        if (!empty($usrfldscoid)) {
+            $urlmatches = $urlmatches + aconnect_meeting_exists($aconnect, $usrfldscoid, $filter);
+        }
 
         if (empty($urlmatches)) {
             $urlmatches = array();
@@ -162,6 +178,14 @@ class mod_adobeconnect_mod_form extends moodleform_mod {
             // Do nothing
         } elseif (!preg_match('/^[a-z][a-z\-]*/i', $data['meeturl'])) {
             $errors['meeturl'] = get_string('invalidurl', 'adobeconnect');
+        }
+
+        // Check for available groups if groupmode is selected
+        if ($data['groupmode'] > 0) {
+            $crsgroups = groups_get_all_groups($COURSE->id);
+            if (empty($crsgroups)) {
+                $errors['groupmode'] = get_string('missingexpectedgroups', 'adobeconnect');
+            }
         }
 
         // Adding activity

@@ -29,18 +29,6 @@ $PAGE->requires->js_init_call('M.mod_adobeconnect.init');
     $settings->add(new admin_setting_configtext('adobeconnect_meethost', get_string('meetinghost', 'adobeconnect'),
                        get_string('meethost_desc', 'adobeconnect'), 'localhost', PARAM_URL));
 
-    $settings->add(new admin_setting_configtext('adobeconnect_foldermeet', get_string('foldermeet', 'adobeconnect'),
-                       get_string('foldermeet_desc', 'adobeconnect'), 'meetings', PARAM_TEXT));
-
-    $settings->add(new admin_setting_configtext('adobeconnect_foldercon', get_string('foldercon', 'adobeconnect'),
-                       get_string('foldercon_desc', 'adobeconnect'), 'content', PARAM_TEXT));
-
-    $settings->add(new admin_setting_configtext('adobeconnect_folderfarch', get_string('folderfarch', 'adobeconnect'),
-                       get_string('folderfarch', 'adobeconnect'), 'forced-archives', PARAM_TEXT));
-
-    $settings->add(new admin_setting_configtext('adobeconnect_folderumeet', get_string('folderumeet', 'adobeconnect'),
-                       get_string('folderumeet_desc', 'adobeconnect'), 'user-meetings', PARAM_TEXT));
-
     $settings->add(new admin_setting_configtext('adobeconnect_port', get_string('port', 'adobeconnect'),
                        get_string('port_desc', 'adobeconnect'), '80', PARAM_INT));
 
@@ -58,6 +46,7 @@ $PAGE->requires->js_init_call('M.mod_adobeconnect.init');
 
     $settings->add(new admin_setting_configcheckbox('adobeconnect_https', get_string('https', 'adobeconnect'),
                        get_string('https_desc', 'adobeconnect'), '0'));
+
 
     $url = $CFG->wwwroot . '/mod/adobeconnect/conntest.php';
     $url = htmlentities($url);

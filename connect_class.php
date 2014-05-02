@@ -24,6 +24,7 @@ class connect_class {
     var $_apicall;
     var $_connection;
     var $_https;
+    var $_headersresponse;
 
     public function __construct($serverurl = '', $serverport = 80,
                                 $username = '', $password = '',
@@ -169,6 +170,12 @@ class connect_class {
            }
        }
 
+       // RR
+       if (isset($this->_cookie)) {       	
+         curl_setopt($ch, CURLOPT_COOKIE, "Set-Cookie: BREEZESESSION=" . $this->_cookie . ";HttpOnly;domain=.adobeconnect.com;path=/");
+       }
+       // -RR
+
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $this->_xmlrequest);
         curl_setopt($ch, CURLOPT_POST, 1);
@@ -182,10 +189,19 @@ class connect_class {
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
 
         // Include header from response
+        
         curl_setopt($ch, CURLOPT_HEADER, $return_header);
 
         $result = curl_exec($ch);
 
+        // RR
+        if ($return_header) {
+          $headers_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+          $this->_headersresponse = substr($result, 0, $headers_size);
+          $result = substr($result, $headers_size);
+        }
+        // -RR
+        
         curl_close($ch);
 
         return $result;
@@ -204,12 +220,17 @@ class connect_class {
         // The first parameter is 1 because we want to include the response header
         // to extract the session cookie
         if (!empty($username)) {
-            $hearder = array("$CFG->adobeconnect_admin_httpauth: " . $username);
+            $header = array("$CFG->adobeconnect_admin_httpauth: " . $username);
+            // RR
+            $return_header = 1;
+            // -RR
         }
 
-        $this->_xmlresponse = $this->send_request($return_header, $hearder, $stop);
+        $this->_xmlresponse = $this->send_request($return_header, $header, $stop);
 
-        $this->set_session_cookie($this->_xmlresponse);
+        // RR
+        $this->set_session_cookie($this->_headersresponse);
+        // -RR
 
         return $this->_xmlresponse;
     }

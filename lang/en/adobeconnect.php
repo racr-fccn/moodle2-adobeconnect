@@ -34,14 +34,6 @@ $string['email_login_desc'] = 'Check this option only if your Connect Pro server
                               'this option on/off during regular usage of this activity module can potentially create duplicaed users on the Connect Pro server';
 $string['endtime'] = 'End time';
 $string['existingusers'] = '$a existing users';
-$string['foldermeet'] = 'Meetings Folder';
-$string['foldermeet_desc'] = 'Meetings Folder Description';
-$string['foldercon'] = 'Content Folder';
-$string['foldercon_desc'] = 'Content Folder Description';
-$string['folderfarch'] = 'Forced Archive Folder';
-$string['folderfarch_desc'] = 'Forced Archive Folder Description';
-$string['folderumeet'] = 'User Meetings Folder';
-$string['folderumeet_desc'] = 'User Meetings Folder Description';
 $string['groupswitch'] = 'Filter by group';
 $string['host'] = 'Host';
 $string['host_desc'] = 'Where REST calls get sent to';
@@ -106,6 +98,7 @@ $string['nomeeting'] = 'No meeting exists on the server';
 $string['noinstances'] = 'There are no instances of adobeconnect';
 $string['error1'] = 'You must be a site administrator to access this page';
 $string['error2'] = 'The property \'{$a}\' is empty, please input a value and save the settings';
+$string['errormeeting'] = 'Error retrieving recording';
 $string['settingblurb'] = '<center><img src="{$a->image}" /></center><br />
     <p>Adobe Systems Inc. and Remote-Learner.net have partnered together to create the first publicly available
     and officially sponsored, integration method between Moodle and Adobe Acrobat Connect Pro. This new
@@ -172,3 +165,4 @@ $string['longurl'] = 'That meeting URL is too long. Try shortening it';
 $string['errorrecording'] = 'Unable to find recording session';
 $string['meetinfo'] = 'More Meeting Detail';
 $string['meetinfotxt'] = 'See server meeting details';
+$string['missingexpectedgroups'] = 'There are no groups available.';
