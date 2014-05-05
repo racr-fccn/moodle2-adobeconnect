@@ -28,6 +28,22 @@ require_once('locallib.php');
 
 define("MAX_USERS_TO_LIST_PER_ROLE", 10);
 
+function roles_get_potential_user_selector($context, $name, $options) {
+          $blockinsidecourse = false;
+          if ($context->contextlevel == CONTEXT_BLOCK) {
+              $parentcontext = context::instance_by_id(get_parent_contextid($context));
+              $blockinsidecourse = in_array($parentcontext->contextlevel, array(CONTEXT_MODULE, CONTEXT_COURSE));
+          }
+  
+          if (($context->contextlevel == CONTEXT_MODULE || $blockinsidecourse) &&
+                  !is_inside_frontpage($context)) {
+              $potentialuserselector = new potential_assignees_below_course('addselect', $options);
+          } else {
+              $potentialuserselector = new potential_assignees_course_and_above('addselect', $options);
+          }
+      return $potentialuserselector;
+  }
+
 $contextid      = required_param('contextid',PARAM_INT);
 $roleid         = optional_param('roleid', 0, PARAM_INT);
 
@@ -92,9 +108,8 @@ if ($roleid) {
 
     // Create the user selector objects.
     $options = array('context' => $context, 'roleid' => $roleid);
-
-    $potentialuserselector = roles_get_potential_user_selector($context, 'addselect', $options);
-    $currentuserselector = new existing_role_holders('removeselect', $options);
+    $potentialuserselector = core_role_get_potential_user_selector($context, 'addselect', $options);
+    $currentuserselector = new core_role_existing_role_holders('removeselect', $options);
 
     // Process incoming role assignments
     $errors = array();
