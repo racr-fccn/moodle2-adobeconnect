@@ -104,6 +104,10 @@ function adobe_connection_test($host = '', $port = 80, $username = '',
 
             $aconnectDOM->create_request($params);
 
+            // RR
+            echo '<p style="color:#006633">current session key: ' . $aconnectDOM->get_cookie() . '</p>';
+            // RR
+            
             if ($aconnectDOM->call_success()) {
                 echo '<p style="color:#006633">successfully logged in as admin user</p>';
                 //$username

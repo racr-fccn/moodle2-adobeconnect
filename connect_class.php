@@ -153,7 +153,8 @@ class connect_class {
 
         } else {
 
-            $querystring = (!empty($this->_cookie)) ?  '?session='. $this->_cookie : '';
+            // $querystring = (!empty($this->_cookie)) ?  '?session='. $this->_cookie : '';
+            $querystring = "";
             curl_setopt($ch, CURLOPT_URL, $serverurl . $querystring);
 
         }
@@ -169,9 +170,11 @@ class connect_class {
                curl_setopt($ch, CURLOPT_PROXYPORT, $CFG->proxyport);
            }
        }
-
+       
        // RR
-       if (isset($this->_cookie)) {       	
+       $this->_cookie = urldecode($this->_cookie);
+       $sentcookie = $this->_cookie;
+       if (isset($this->_cookie)) {         
          curl_setopt($ch, CURLOPT_COOKIE, "BREEZESESSION=" . $this->_cookie . ";HttpOnly;domain=.adobeconnect.com;path=/");
        }
        // -RR
@@ -190,16 +193,37 @@ class connect_class {
 
         // Include header from response
         
-        curl_setopt($ch, CURLOPT_HEADER, $return_header);
+        curl_setopt($ch, CURLOPT_HEADER, TRUE);
 
         $result = curl_exec($ch);
 
         // RR
-        if ($return_header) {
-          $headers_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-          $this->_headersresponse = substr($result, 0, $headers_size);
+        
+        $headers_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+        $this->_headersresponse = substr($result, 0, $headers_size);          
+        $this->update_cookie();
+        
+        if (!$return_header) {
           $result = substr($result, $headers_size);
         }
+
+        /*
+        print "<pre>";
+        var_dump(
+          array("request" => 
+            array("cookie" => $sentcookie,
+                  "post" => htmlentities($this->_xmlrequest))
+                ),                    
+          array("response" =>     
+            array("cookie" => $this->_cookie,
+                  "headers" => $this->_headersresponse,
+                  "result" => htmlentities($result)
+                  )
+                )
+              );
+        print "</pre>";
+        */
+
         // -RR
         
         curl_close($ch);
@@ -207,6 +231,29 @@ class connect_class {
         return $result;
     }
 
+    // RR    
+    public function get_headersresponse()
+	  { 
+	    return $this->_headersresponse;
+	  }
+  
+    public function update_cookie()
+	  {
+            // print("UPDATE COOKIE!");
+      
+	    $headers = explode("\r\n", $this->get_headersresponse());
+      
+	    foreach($headers as $header) {
+		    if (preg_match("/Set-Cookie: BREEZESESSION=([^;]+);/", $header, $cookie)) {
+			    // Set cookie
+           // print("NEW COOKIE!");
+			    $this->_cookie = $cookie[1];			  
+		    }
+      }
+	    return $this->_cookie;
+	  }
+    // -RR
+    
     /**
      * Sends the HTTP header login request and returns the response xml
      * @param string username username to use for header x-user-id
